@@ -41,9 +41,9 @@ public:
     void set_sound_timer(int cycles);
 
 private:
-    vector<int> memory;
-    vector<int> registers;
-    vector<int> screen; 
+    int memory[4096] {0};
+    int registers[16] {0};
+    int screen[2048] {0};
     int program_counter; 
     int address_pointer; 
     int stack_pointer; 

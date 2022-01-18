@@ -8,7 +8,10 @@ TEST_CASE( "CHIP-8 Memory" )
 {
     Memory memo = Memory();
 
-    REQUIRE( memo.mem_read(0) == 0 );
+    REQUIRE( memo.mem_read(0) == 0xF0 );
+    REQUIRE( memo.mem_read(79) == 0x80 );
+    REQUIRE( memo.mem_read(80) == 0 );
+    REQUIRE( memo.mem_read(4095) == 0 );
     REQUIRE( memo.get_program_counter() == 0x200 );
     REQUIRE( memo.get_delay_timer() == -1 );
 
