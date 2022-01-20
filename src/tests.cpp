@@ -32,7 +32,44 @@ TEST_CASE( "CHIP-8 Memory" )
 
 TEST_CASE( "CHIP-8 CPU" )
 {
-    Cpu cpu = Cpu();
-
-    REQUIRE( cpu.decode(0x00E0) == string("00E0") );
+    Memory mem = Memory();
+    SECTION( "decoding chip-8 instructions" ) 
+    {
+        REQUIRE( execute(0x00E0, mem) == 0x00E0 );    // 00E0
+        REQUIRE( execute(0x00EE, mem) == 0x00EE );    // 00EE 
+        REQUIRE( execute(0x0F22, mem) == 0x0000 );    // 0nnn
+        REQUIRE( execute(0x199B, mem) == 0x1000 );    // 1nnn
+        REQUIRE( execute(0x2761, mem) == 0x2000 );    // 2nnn
+        REQUIRE( execute(0x37FD, mem) == 0x3000 );    // 3xkk
+        REQUIRE( execute(0x4DF7, mem) == 0x4000 );    // 4xkk
+        REQUIRE( execute(0x5340, mem) == 0x5000 );    // 5xy0
+        REQUIRE( execute(0x69AA, mem) == 0x6000 );    // 6xkk
+        REQUIRE( execute(0x7213, mem) == 0x7000 );    // 7xkk
+        REQUIRE( execute(0x8890, mem) == 0x8000 );    // 8xy0
+        REQUIRE( execute(0x8BB1, mem) == 0x8001 );    // 8xy1
+        REQUIRE( execute(0x8422, mem) == 0x8002 );    // 8xy2
+        REQUIRE( execute(0x8983, mem) == 0x8003 );    // 8xy3
+        REQUIRE( execute(0x8164, mem) == 0x8004 );    // 8xy4
+        REQUIRE( execute(0x8775, mem) == 0x8005 );    // 8xy5
+        REQUIRE( execute(0x8CD6, mem) == 0x8006 );    // 8xy6
+        REQUIRE( execute(0x8E17, mem) == 0x8007 );    // 8xy7
+        REQUIRE( execute(0x837E, mem) == 0x800E );    // 8xyE
+        REQUIRE( execute(0x9880, mem) == 0x9000 );    // 9xy0
+        REQUIRE( execute(0xABCD, mem) == 0xA000 );    // Annn
+        REQUIRE( execute(0xB321, mem) == 0xB000 );    // Bnnn
+        REQUIRE( execute(0xC43C, mem) == 0xC000 );    // Cxkk
+        REQUIRE( execute(0xD982, mem) == 0xD001 );    // Dxyn
+        REQUIRE( execute(0xE99E, mem) == 0xE09E );    // Ex9E
+        REQUIRE( execute(0xEBA1, mem) == 0xE0A1 );    // ExA1
+        REQUIRE( execute(0xF007, mem) == 0xF007 );    // Fx07
+        REQUIRE( execute(0xF10A, mem) == 0xF00A );    // Fx0A
+        REQUIRE( execute(0xF215, mem) == 0xF015 );    // Fx15
+        REQUIRE( execute(0xFF18, mem) == 0xF018 );    // Fx18
+        REQUIRE( execute(0xF11E, mem) == 0xF01E );    // Fx1E
+        REQUIRE( execute(0xF829, mem) == 0xF029 );    // Fx29
+        REQUIRE( execute(0xF533, mem) == 0xF033 );    // Fx33
+        REQUIRE( execute(0xFE55, mem) == 0xF055 );    // Fx55
+        REQUIRE( execute(0xF965, mem) == 0xF065 );    // Fx65
+        REQUIRE( execute(0xF331, mem) == -1 );        // Invalid
+    }
 }
