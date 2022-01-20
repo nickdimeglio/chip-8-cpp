@@ -1,6 +1,5 @@
 #include "Memory.h"
-#include <vector>
-
+#include <algorithm>
 using namespace std;
 
 // Font set

@@ -1,7 +1,10 @@
 #define CATCH_CONFIG_MAIN
-#include "Memory.h"
-#include <iostream>
 #include <catch2/catch.hpp>
+#include "Memory.h"
+#include "Cpu.h"
+#include <iostream>
+#include <string>
+using namespace std;
 
 
 TEST_CASE( "CHIP-8 Memory" )
@@ -15,7 +18,7 @@ TEST_CASE( "CHIP-8 Memory" )
     REQUIRE( memo.get_program_counter() == 0x200 );
     REQUIRE( memo.get_delay_timer() == -1 );
 
-    SECTION( "setting memory members" )
+    SECTION( "setting memory state" )
     {
         memo.mem_write(0x600, 99);
         memo.set_address_pointer(0x400);
@@ -25,4 +28,11 @@ TEST_CASE( "CHIP-8 Memory" )
         REQUIRE( memo.get_address_pointer() == 0x400 );
         REQUIRE( memo.get_sound_timer() == 60 );
     }
+}
+
+TEST_CASE( "CHIP-8 CPU" )
+{
+    Cpu cpu = Cpu();
+
+    REQUIRE( cpu.decode(0x00E0) == string("00E0") );
 }
