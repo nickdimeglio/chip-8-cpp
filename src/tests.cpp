@@ -126,6 +126,21 @@ TEST_CASE( "CHIP-8 CPU" )
 
     SECTION( "Execute 3XKK" )
     {
-
+        // 3XKK skips the next instruction if VX != KK
+        Memory mem = Memory();
+        
+        // Should skip if VX = KK
+        int pc = mem.get_program_counter();
+        mem.reg_write(0x8, 0xBB);
+        // 3XKK should return 0x3000
+        REQUIRE( execute(0x38BB, mem) == 0x3000 );
+        // pc should skip an instruction (2 bytes)
+        REQUIRE( mem.get_program_counter() == (pc + 2) );
+        
+        // Should not skip otherwise
+        pc = mem.get_program_counter();
+        // 3XKK should return 0x3000
+        REQUIRE( execute(0x30BB, mem) == 0x3000 );
+        REQUIRE( mem.get_program_counter() == pc );
     }
 }
