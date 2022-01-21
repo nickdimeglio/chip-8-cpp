@@ -41,7 +41,6 @@ TEST_CASE( "CHIP-8 CPU" )
     {
         REQUIRE( execute(0x00E0, mem) == 0x00E0 );    // 00E0
         REQUIRE( execute(0x00EE, mem) == 0x00EE );    // 00EE 
-        REQUIRE( execute(0x0F22, mem) == 0x0000 );    // 0nnn
         REQUIRE( execute(0x199B, mem) == 0x1000 );    // 1nnn
         REQUIRE( execute(0x2761, mem) == 0x2000 );    // 2nnn
         REQUIRE( execute(0x37FD, mem) == 0x3000 );    // 3xkk
@@ -102,5 +101,14 @@ TEST_CASE( "CHIP-8 CPU" )
         REQUIRE( mem.get_program_counter() == 0x800 );
         REQUIRE( execute(0x00EE, mem) == 0x00EE );
         REQUIRE( mem.get_program_counter() == 0x200 );
+    }
+
+    SECTION( "Execute 1nnn" ) 
+    {
+        // 1nnn sets the program counter to NNN
+        Memory mem = Memory();
+        REQUIRE( mem.get_program_counter() == 0x200 );
+        REQUIRE( execute(0x1750, mem) == 0x1000 );
+        REQUIRE( mem.get_program_counter() == 0x750 );
     }
 }
