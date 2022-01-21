@@ -123,7 +123,6 @@ TEST_CASE( "CHIP-8 CPU" )
         // New pc should be set
         REQUIRE( mem.get_program_counter() == 0x600 );
     }
-
     SECTION( "Execute 3XKK" )
     {
         // 3XKK skips the next instruction if VX != KK
@@ -142,5 +141,23 @@ TEST_CASE( "CHIP-8 CPU" )
         // 3XKK should return 0x3000
         REQUIRE( execute(0x30BB, mem) == 0x3000 );
         REQUIRE( mem.get_program_counter() == pc );
+    }
+    SECTION( "Execute 4XKK" )
+    {
+        // 4XKK skips the next instruction if VX != KK
+        Memory mem = Memory();
+
+        // Should not skip if VX = KK
+        int pc = mem.get_program_counter();
+        mem.reg_write(0x8, 0xBB);
+        // 4XKK should return 0x4000
+        REQUIRE( execute(0x48BB, mem) == 0x4000 );
+        // pc should not have skipped
+        REQUIRE( mem.get_program_counter() == pc );
+
+        // Should skip otherwise
+        // 4XKK should return 0x4000
+        REQUIRE( execute(0x40BB, mem) == 0x4000 );
+        REQUIRE( mem.get_program_counter() == (pc + 2) );
     }
 }
