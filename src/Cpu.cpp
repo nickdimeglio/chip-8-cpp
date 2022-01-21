@@ -127,8 +127,8 @@ int op00E0(int instruction, Memory &mem)
 /* Return from a subroutine */
 int op00EE(int instruction, Memory &mem) 
 { 
-    int x = mem.stack_pop();
-    mem.set_program_counter(x);
+    int last_pc = mem.stack_pop();
+    mem.set_program_counter(last_pc);
     return 0x00EE; 
 }
 
@@ -139,7 +139,19 @@ int op1NNN(int instruction, Memory &mem)
     mem.set_program_counter(new_address);
     return 0x1000; 
 }
-int op2NNN(int instruction, Memory &mem) { return 0x2000; }
+
+/* Call subroutine at NNN */
+int op2NNN(int instruction, Memory &mem) 
+{ 
+    // Store current program counter
+    int pc = mem.get_program_counter();
+    mem.stack_push(pc);
+    // Jump to NNN
+    int new_pc = instruction & 0xFFF;
+    mem.set_program_counter(new_pc);
+    return 0x2000; 
+}
+
 int op3XKK(int instruction, Memory &mem) { return 0x3000; }
 int op4XKK(int instruction, Memory &mem) { return 0x4000; }
 int op5XY0(int instruction, Memory &mem) { return 0x5000; }

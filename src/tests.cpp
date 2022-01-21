@@ -102,13 +102,25 @@ TEST_CASE( "CHIP-8 CPU" )
         REQUIRE( execute(0x00EE, mem) == 0x00EE );
         REQUIRE( mem.get_program_counter() == 0x200 );
     }
-
-    SECTION( "Execute 1nnn" ) 
+    SECTION( "Execute 1NNN" ) 
     {
         // 1nnn sets the program counter to NNN
         Memory mem = Memory();
         REQUIRE( mem.get_program_counter() == 0x200 );
         REQUIRE( execute(0x1750, mem) == 0x1000 );
         REQUIRE( mem.get_program_counter() == 0x750 );
+    }
+
+    SECTION( "Execute 2NNN" )
+    {
+        // 2nnn calls the subroutine at NNN
+        Memory mem = Memory();
+        int pc = mem.get_program_counter();
+        // Executing 2NNN should return 0x2000
+        REQUIRE( execute(0x2600, mem) == 0x2000 );
+        // Last pc should be on top of stack
+        REQUIRE( mem.stack_peek() == pc );
+        // New pc should be set
+        REQUIRE( mem.get_program_counter() == 0x600 );
     }
 }

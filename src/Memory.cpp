@@ -74,10 +74,6 @@ void Memory::set_program_counter(int address) { program_counter = address; }
 int Memory::get_address_pointer() { return address_pointer; }
 void Memory::set_address_pointer(int address) { address_pointer = address; }
 
-// Stack access
-int Memory::get_stack_pointer(int address) { return stack_pointer; }
-void Memory::set_stack_pointer(int address) { stack_pointer = address; }
-
 // Timer access
 int Memory::get_delay_timer() { return delay_timer; }
 void Memory::set_delay_timer(int cycles) { delay_timer = cycles; }

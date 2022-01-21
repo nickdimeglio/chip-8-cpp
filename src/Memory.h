@@ -34,10 +34,6 @@ public:
     int get_address_pointer();
     void set_address_pointer(int address);
 
-    // Stack access
-    int get_stack_pointer(int address);
-    void set_stack_pointer(int address);
-
     // Timer access
     int get_delay_timer();
     void set_delay_timer(int cycles);
