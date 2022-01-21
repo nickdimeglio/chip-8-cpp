@@ -26,9 +26,6 @@ int font_set[80] {
 Memory::Memory() 
 {
     copy(font_set, font_set + 80, memory); 
-    program_counter = 0x200;
-    delay_timer = -1;
-    sound_timer = -1;
 }
 
 // Main memory access
@@ -38,6 +35,32 @@ void Memory::mem_write(int address, int value) { memory[address] = value; }
 // Register access
 int Memory::reg_read(int address) { return registers[address]; }
 void Memory::reg_write(int address, int value) { registers[address] = value; }
+
+// Stack access
+int Memory::stack_pop()
+{
+    stack_pointer--;
+    if (0 <= stack_pointer && stack_pointer <= 15) 
+        return stack[stack_pointer];
+    else
+        return -1;
+}
+int Memory::stack_peek()
+{
+    if (1 <= stack_pointer && stack_pointer <= 16)
+        return stack[stack_pointer - 1];
+    else
+        return -1;
+}
+void Memory::stack_push(int address) 
+{
+    if (0 <= stack_pointer && stack_pointer <= 15)
+    {
+        stack[stack_pointer] = address;
+        stack_pointer++;
+    }
+}
+
 
 // Screen memory access
 int Memory::screen_read(int address) { return screen[address]; }

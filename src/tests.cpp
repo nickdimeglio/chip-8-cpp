@@ -21,12 +21,16 @@ TEST_CASE( "CHIP-8 Memory" )
     SECTION( "setting memory state" )
     {
         memo.mem_write(0x600, 99);
-        memo.set_address_pointer(0x400);
-        memo.set_sound_timer(60);
-
         REQUIRE( memo.mem_read(0x600) == 99 );
+
+        memo.set_address_pointer(0x400);
         REQUIRE( memo.get_address_pointer() == 0x400 );
+
+        memo.set_sound_timer(60);
         REQUIRE( memo.get_sound_timer() == 60 );
+
+        memo.stack_push(0x300);
+        REQUIRE( memo.stack_pop() == 0x300);
     }
 }
 
@@ -84,5 +88,19 @@ TEST_CASE( "CHIP-8 CPU" )
         REQUIRE( execute(0x00E0, mem) == 0x00E0 );
         // Two pixels reset to zero
         REQUIRE( mem.screen_read(0x600) == 0 );
+    }
+
+    SECTION( "Execute 00EE" )
+    {
+        // 00E0 Returns from a Subroutine
+        Memory mem = Memory();
+        // Jump from 0x200 to 0x800, storing 0x200 on the stack
+        REQUIRE( mem.get_program_counter() == 0x200 );
+        mem.stack_push(mem.get_program_counter());
+        mem.set_program_counter(0x800);
+        // Return to 0x200
+        REQUIRE( mem.get_program_counter() == 0x800 );
+        REQUIRE( execute(0x00EE, mem) == 0x00EE );
+        REQUIRE( mem.get_program_counter() == 0x200 );
     }
 }

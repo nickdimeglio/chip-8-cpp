@@ -15,7 +15,7 @@ OpcodeFunction decode(int instruction);
 
 // Opcode implementations
 int op00E0(int instruction, Memory &mem);
-int op00EE(int instruction, Memory mem);
+int op00EE(int instruction, Memory &mem);
 int op0NNN(int instruction, Memory mem);
 int op1NNN(int instruction, Memory mem);
 int op2NNN(int instruction, Memory mem);

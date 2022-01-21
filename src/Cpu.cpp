@@ -118,15 +118,22 @@ OpcodeFunction decode(int instruction)
     }
 };
 
-
-// Chip-8 Instructions
+/* Clear the screen */
 int op00E0(int instruction, Memory &mem) 
 { 
     for (auto i = 0; i != mem.screen_size; ++i)
         mem.screen_write(i, 0);
     return 0x00E0; 
 }
-int op00EE(int instruction, Memory mem) { return 0x00EE; }
+
+/* Return from a subroutine */
+int op00EE(int instruction, Memory &mem) 
+{ 
+    int x = mem.stack_pop();
+    mem.set_program_counter(x);
+    return 0x00EE; 
+}
+
 int op0NNN(int instruction, Memory mem) { return 0x0000; }
 int op1NNN(int instruction, Memory mem) { return 0x1000; }
 int op2NNN(int instruction, Memory mem) { return 0x2000; }

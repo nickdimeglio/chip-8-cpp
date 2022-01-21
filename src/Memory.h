@@ -16,6 +16,11 @@ public:
     int reg_read(int address);
     void reg_write(int address, int value); 
 
+    // Stack access
+    int stack_pop();
+    int stack_peek();
+    void stack_push(int address);
+
     // Screen memory access
     int screen_size = 2048;
     int screen_read(int address);
@@ -43,11 +48,12 @@ private:
     int memory[4096] {0};
     int registers[16] {0};
     int screen[2048] {0};
-    int program_counter; 
-    int address_pointer; 
-    int stack_pointer; 
-    int delay_timer; 
-    int sound_timer; 
+    int stack[16] {0};
+    int program_counter = 0x200;
+    int address_pointer = 0;
+    int stack_pointer = 0;
+    int delay_timer = -1;
+    int sound_timer = -1;
 };
 
 #endif
