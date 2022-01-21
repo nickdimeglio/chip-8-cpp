@@ -2,18 +2,19 @@
 #define CPU_H
 #include "Memory.h"
 #include <string>
+#include <functional>
 using namespace std;
-using OpcodeFunction = function<int(int, Memory)>;
+using OpcodeFunction = function<int(int, Memory&)>;
 
 
 // Execute opcodes on instructions
-int execute(int instruction, Memory mem);
+int execute(int instruction, Memory &mem);
 
 // Decode instructions into opcodes
 OpcodeFunction decode(int instruction);
 
 // Opcode implementations
-int op00E0(int instruction, Memory mem);
+int op00E0(int instruction, Memory &mem);
 int op00EE(int instruction, Memory mem);
 int op0NNN(int instruction, Memory mem);
 int op1NNN(int instruction, Memory mem);

@@ -5,11 +5,11 @@
 #include <sstream>
 #include <functional>
 using namespace std;
-using OpcodeFunction = function<int(int, Memory)>;
+using OpcodeFunction = function<int(int, Memory&)>;
 
 
 
-int execute(int instruction, Memory mem)
+int execute(int instruction, Memory &mem)
 {
     OpcodeFunction opcode = decode(instruction);
     return opcode(instruction, mem);
@@ -120,7 +120,12 @@ OpcodeFunction decode(int instruction)
 
 
 // Chip-8 Instructions
-int op00E0(int instruction, Memory mem) { return 0x00E0; } 
+int op00E0(int instruction, Memory &mem) 
+{ 
+    for (auto i = 0; i != mem.screen_size; ++i)
+        mem.screen_write(i, 0);
+    return 0x00E0; 
+}
 int op00EE(int instruction, Memory mem) { return 0x00EE; }
 int op0NNN(int instruction, Memory mem) { return 0x0000; }
 int op1NNN(int instruction, Memory mem) { return 0x1000; }

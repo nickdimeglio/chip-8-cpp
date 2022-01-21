@@ -8,6 +8,7 @@ public:
     Memory();
 
     // Main memory access
+    int mem_size = 4096;
     int mem_read(int address);
     void mem_write(int address, int value);
 
@@ -16,6 +17,7 @@ public:
     void reg_write(int address, int value); 
 
     // Screen memory access
+    int screen_size = 2048;
     int screen_read(int address);
     void screen_write(int address, int value);
 

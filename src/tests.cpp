@@ -72,4 +72,17 @@ TEST_CASE( "CHIP-8 CPU" )
         REQUIRE( execute(0xF965, mem) == 0xF065 );    // Fx65
         REQUIRE( execute(0xF331, mem) == -1 );        // Invalid
     }
+    SECTION( "Execute 00E0" ) 
+    {
+        // 00E0 Clears the Screen
+        Memory mem = Memory();
+        REQUIRE( mem.screen_read(0x600) == 0 );
+        mem.screen_write(0x600, 1);
+        // Two pixels set to one
+        REQUIRE( mem.screen_read(0x600) == 1 );
+        // 00E0 executes without error 
+        REQUIRE( execute(0x00E0, mem) == 0x00E0 );
+        // Two pixels reset to zero
+        REQUIRE( mem.screen_read(0x600) == 0 );
+    }
 }
