@@ -175,4 +175,12 @@ TEST_CASE( "CHIP-8 CPU" )
         REQUIRE( execute(0x5BD0, mem) == 0x5000 );
         REQUIRE( mem.get_program_counter() == 0x202);
     }
+    SECTION( "Execute 6XKK" )
+    {
+        // 6XKK puts the value KK into register VX
+        Memory mem = Memory();
+        REQUIRE( mem.reg_read(0x7) == 0 );
+        REQUIRE( execute(0x67BC, mem) == 0x6000 );
+        REQUIRE( mem.reg_read(0x7) == 0xBC );
+    }
 }

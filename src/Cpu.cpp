@@ -184,7 +184,13 @@ int op5XY0(int instruction, Memory &mem)
     return 0x5000; 
 }
 
-int op6XKK(int instruction, Memory &mem) { return 0x6000; }
+int op6XKK(int instruction, Memory &mem) 
+{ 
+    int x = (instruction & 0xFFF) >> 8;
+    int kk = (instruction & 0xFF);
+    mem.reg_write(x, kk);
+    return 0x6000; 
+}
 int op7XKK(int instruction, Memory &mem) { return 0x7000; }
 int op8XY0(int instruction, Memory &mem) { return 0x8000; }
 int op8XY1(int instruction, Memory &mem) { return 0x8001; }
