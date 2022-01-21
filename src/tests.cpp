@@ -123,4 +123,9 @@ TEST_CASE( "CHIP-8 CPU" )
         // New pc should be set
         REQUIRE( mem.get_program_counter() == 0x600 );
     }
+
+    SECTION( "Execute 3XKK" )
+    {
+
+    }
 }
