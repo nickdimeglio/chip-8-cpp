@@ -158,25 +158,32 @@ int op3XKK(int instruction, Memory &mem)
     int x = (instruction & 0xF00) >> 8;
     int kk = (instruction & 0xFF);
     if (mem.reg_read(x) == kk)
-    {
-        int pc = mem.get_program_counter();
-        mem.set_program_counter(pc + 2);
-    }
+        mem.inc_program_counter();
     return 0x3000; 
 }
 
+/* Skip next instruction of VX != KK */
 int op4XKK(int instruction, Memory &mem) 
 { 
     int x = (instruction & 0xF00) >> 8;
     int kk = (instruction & 0xFF);
     if (mem.reg_read(x) != kk)
-    {
-        int pc = mem.get_program_counter();
-        mem.set_program_counter(pc + 2);
-    }
+        mem.inc_program_counter();
     return 0x4000; 
 }
-int op5XY0(int instruction, Memory &mem) { return 0x5000; }
+
+/* Skip the next instruction if VX = VY */
+int op5XY0(int instruction, Memory &mem) 
+{ 
+    int x = (instruction & 0xFFF) >> 8;
+    int y = (instruction & 0xFF) >> 4;
+    int vx = mem.reg_read(x);
+    int vy = mem.reg_read(y);
+    if (vx == vy)
+        mem.inc_program_counter();
+    return 0x5000; 
+}
+
 int op6XKK(int instruction, Memory &mem) { return 0x6000; }
 int op7XKK(int instruction, Memory &mem) { return 0x7000; }
 int op8XY0(int instruction, Memory &mem) { return 0x8000; }

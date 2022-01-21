@@ -68,6 +68,7 @@ void Memory::screen_write(int address, int value) { screen[address] = value; }
 
 // ROM access 
 int Memory::get_program_counter() { return program_counter; }
+void Memory::inc_program_counter() { program_counter += 2; }
 void Memory::set_program_counter(int address) { program_counter = address; }
 
 // Address pointer access

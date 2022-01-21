@@ -150,14 +150,29 @@ TEST_CASE( "CHIP-8 CPU" )
         // Should not skip if VX = KK
         int pc = mem.get_program_counter();
         mem.reg_write(0x8, 0xBB);
-        // 4XKK should return 0x4000
-        REQUIRE( execute(0x48BB, mem) == 0x4000 );
         // pc should not have skipped
+        REQUIRE( execute(0x48BB, mem) == 0x4000 );
         REQUIRE( mem.get_program_counter() == pc );
 
         // Should skip otherwise
-        // 4XKK should return 0x4000
         REQUIRE( execute(0x40BB, mem) == 0x4000 );
         REQUIRE( mem.get_program_counter() == (pc + 2) );
+    }
+    SECTION( "Execute 5XY0" )
+    {
+        // 5XY0 skips the next instruction if VX = VY
+        Memory mem = Memory();
+        mem.reg_write(0xB, 0xA);
+        mem.reg_write(0xC, 0xA);
+        mem.reg_write(0xD, 0x1);
+
+        // Should skip if VX = VY
+        REQUIRE( mem.get_program_counter() == 0x200);
+        REQUIRE( execute(0x5BC0, mem) == 0x5000 );
+        REQUIRE( mem.get_program_counter() == 0x202);
+
+        // Should not skip if VX != VY
+        REQUIRE( execute(0x5BD0, mem) == 0x5000 );
+        REQUIRE( mem.get_program_counter() == 0x202);
     }
 }

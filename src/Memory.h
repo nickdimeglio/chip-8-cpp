@@ -28,7 +28,9 @@ public:
 
     // ROM access 
     int get_program_counter();
+    void inc_program_counter();
     void set_program_counter(int address);
+
 
     // Address pointer access
     int get_address_pointer();
