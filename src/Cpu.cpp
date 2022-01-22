@@ -279,7 +279,16 @@ int op8XY5(int instruction, Memory &mem)
     mem.reg_write(x, vx - vy);
     return 0x8005; 
 }
-int op8XY6(int instruction, Memory &mem) { return 0x8006; }
+
+/* VF = least significant bit of VX,  VX >>= 1 */
+int op8XY6(int instruction, Memory &mem) 
+{ 
+    int x = (instruction & 0xFFF) >> 8;
+    int vx = mem.reg_read(x);     
+    mem.reg_write(0xF, vx & 0x1);
+    mem.reg_write(x, vx >> 1);
+    return 0x8006; 
+}
 int op8XY7(int instruction, Memory &mem) { return 0x8007; }
 int op8XYE(int instruction, Memory &mem) { return 0x800E; }
 int op9XY0(int instruction, Memory &mem) { return 0x9000; }
