@@ -184,6 +184,7 @@ int op5XY0(int instruction, Memory &mem)
     return 0x5000; 
 }
 
+/* Put the value KK in VX */
 int op6XKK(int instruction, Memory &mem) 
 { 
     int x = (instruction & 0xFFF) >> 8;
@@ -191,7 +192,18 @@ int op6XKK(int instruction, Memory &mem)
     mem.reg_write(x, kk);
     return 0x6000; 
 }
-int op7XKK(int instruction, Memory &mem) { return 0x7000; }
+
+/* Put VX + KK in VX */
+int op7XKK(int instruction, Memory &mem) 
+{ 
+    int x = (instruction & 0xFFF) >> 8;
+    int vx = mem.reg_read(x);
+    int kk = (instruction & 0xFF);
+    mem.reg_write(x, vx + kk);
+    return 0x7000; 
+}
+
+
 int op8XY0(int instruction, Memory &mem) { return 0x8000; }
 int op8XY1(int instruction, Memory &mem) { return 0x8001; }
 int op8XY2(int instruction, Memory &mem) { return 0x8002; }

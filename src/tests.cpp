@@ -183,4 +183,12 @@ TEST_CASE( "CHIP-8 CPU" )
         REQUIRE( execute(0x67BC, mem) == 0x6000 );
         REQUIRE( mem.reg_read(0x7) == 0xBC );
     }
+    SECTION( "Execute 7XKK" )
+    {
+        // 7XKK puts the value VX + KK in VX
+        Memory mem = Memory();
+        mem.reg_write(0xC, 0xA);
+        REQUIRE( execute(0x7C06, mem) == 0x7000 );
+        REQUIRE( mem.reg_read(0xC) == 0x10 );
+    }
 }
