@@ -198,10 +198,18 @@ TEST_CASE( "CHIP-8 CPU" )
     }
     SECTION( "Execute 8XY2" )
     {
-        // 8Xy2 sets VX = VX and VY
+        // 8XY2 sets VX = VX and VY
         mem.reg_write(0xA, 0xAF);
         mem.reg_write(0xB, 0xFA);
         REQUIRE( execute(0x8AB2, mem) == 0x8002 );
         REQUIRE( mem.reg_read(0xA) == 0xAA );
+    }
+    SECTION( "Execute 8XY3" )
+    {
+        // 8XY3 sets VX = VX xor VY
+        mem.reg_write(0xA, 0xAF);
+        mem.reg_write(0xB, 0xFA);
+        REQUIRE( execute(0x8AB3, mem) == 0x8003 );
+        REQUIRE( mem.reg_read(0xA) == 0x55 );
     }
 }

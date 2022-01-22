@@ -235,8 +235,16 @@ int op8XY2(int instruction, Memory &mem)
     return 0x8002; 
 }
 
-
-int op8XY3(int instruction, Memory &mem) { return 0x8003; }
+/* Put (VX xor VY) in VX */
+int op8XY3(int instruction, Memory &mem) 
+{ 
+    int x = (instruction & 0xF00) >> 8;
+    int y = (instruction & 0xF0) >> 4;
+    int vx = mem.reg_read(x);
+    int vy = mem.reg_read(y);
+    mem.reg_write(x, vx ^ vy);
+    return 0x8003; 
+}
 int op8XY4(int instruction, Memory &mem) { return 0x8004; }
 int op8XY5(int instruction, Memory &mem) { return 0x8005; }
 int op8XY6(int instruction, Memory &mem) { return 0x8006; }
