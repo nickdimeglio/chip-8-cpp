@@ -285,7 +285,23 @@ int op8XY6(int instruction, Memory &mem)
     return 0x8006; 
 }
 
-int op8XY7(int instruction, Memory &mem) { return 0x8007; }
+/* Put (VY - VX) in VX, set VF to not borrow */
+int op8XY7(int instruction, Memory &mem) 
+{ 
+    int x = (instruction & 0xF00) >> 8;
+    int y = (instruction & 0xF0) >> 4;
+    int vx = mem.reg_read(x);
+    int vy = mem.reg_read(y);
+
+    mem.reg_write(0xF, vy >= vx);
+    vy += 0x100 * (vy < vx); // For wrap-around
+    vy -= vx;
+    mem.reg_write(x, vy);
+
+    return 0x8007; 
+}
+
+
 int op8XYE(int instruction, Memory &mem) { return 0x800E; }
 int op9XY0(int instruction, Memory &mem) { return 0x9000; }
 int opANNN(int instruction, Memory &mem) { return 0xA000; }
