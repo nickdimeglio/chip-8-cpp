@@ -212,4 +212,20 @@ TEST_CASE( "CHIP-8 CPU" )
         REQUIRE( execute(0x8AB3, mem) == 0x8003 );
         REQUIRE( mem.reg_read(0xA) == 0x55 );
     }
+    SECTION( "Execute 8XY4" )
+    {
+        // 8XY4 sets VX = VX + VY,  VF = carry
+        mem.reg_write(0xA, 0xFF);
+        mem.reg_write(0xB, 0x01);
+
+        // 0xFF + 0x1 == 0x0, carry = 0x1
+        REQUIRE( execute(0x8AB4, mem) == 0x8004 );
+        REQUIRE( mem.reg_read(0xA) == 0x0 );
+        REQUIRE( mem.reg_read(0xF) == 0x1 );
+
+        // 0x0 + 0x1 = 0x1, carry = 0x0
+        REQUIRE( execute(0x8AB4, mem) == 0x8004 );
+        REQUIRE( mem.reg_read(0xA) == 0x1 );
+        REQUIRE( mem.reg_read(0xF) == 0x0 );
+    }
 }

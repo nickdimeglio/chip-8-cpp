@@ -245,7 +245,22 @@ int op8XY3(int instruction, Memory &mem)
     mem.reg_write(x, vx ^ vy);
     return 0x8003; 
 }
-int op8XY4(int instruction, Memory &mem) { return 0x8004; }
+
+/* Put (VX + VY % 0x100) in VX, set VF to carry */
+int op8XY4(int instruction, Memory &mem) 
+{ 
+    int x = (instruction & 0xF00) >> 8;
+    int y = (instruction & 0xF0) >> 4;
+    int vx = mem.reg_read(x);
+    int vy = mem.reg_read(y);
+
+    int sum = vx + vy;
+    mem.reg_write(0xF, sum > 0xFF);     // Check for carry
+    mem.reg_write(x, sum % 0x100);      // Wraparound if needed
+    return 0x8004; 
+}
+
+
 int op8XY5(int instruction, Memory &mem) { return 0x8005; }
 int op8XY6(int instruction, Memory &mem) { return 0x8006; }
 int op8XY7(int instruction, Memory &mem) { return 0x8007; }
