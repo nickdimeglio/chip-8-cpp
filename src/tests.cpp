@@ -78,7 +78,6 @@ TEST_CASE( "CHIP-8 CPU" )
     SECTION( "Execute 00E0" ) 
     {
         // 00E0 Clears the Screen
-        Memory mem = Memory();
         REQUIRE( mem.screen_read(0x600) == 0 );
         mem.screen_write(0x600, 1);
         // Two pixels set to one
@@ -92,7 +91,6 @@ TEST_CASE( "CHIP-8 CPU" )
     SECTION( "Execute 00EE" )
     {
         // 00E0 Returns from a Subroutine
-        Memory mem = Memory();
         // Jump from 0x200 to 0x800, storing 0x200 on the stack
         REQUIRE( mem.get_program_counter() == 0x200 );
         mem.stack_push(mem.get_program_counter());
@@ -105,7 +103,6 @@ TEST_CASE( "CHIP-8 CPU" )
     SECTION( "Execute 1NNN" ) 
     {
         // 1nnn sets the program counter to NNN
-        Memory mem = Memory();
         REQUIRE( mem.get_program_counter() == 0x200 );
         REQUIRE( execute(0x1750, mem) == 0x1000 );
         REQUIRE( mem.get_program_counter() == 0x750 );
@@ -114,7 +111,6 @@ TEST_CASE( "CHIP-8 CPU" )
     SECTION( "Execute 2NNN" )
     {
         // 2nnn calls the subroutine at NNN
-        Memory mem = Memory();
         int pc = mem.get_program_counter();
         // Executing 2NNN should return 0x2000
         REQUIRE( execute(0x2600, mem) == 0x2000 );
@@ -126,8 +122,6 @@ TEST_CASE( "CHIP-8 CPU" )
     SECTION( "Execute 3XKK" )
     {
         // 3XKK skips the next instruction if VX != KK
-        Memory mem = Memory();
-        
         // Should skip if VX = KK
         int pc = mem.get_program_counter();
         mem.reg_write(0x8, 0xBB);
@@ -145,8 +139,6 @@ TEST_CASE( "CHIP-8 CPU" )
     SECTION( "Execute 4XKK" )
     {
         // 4XKK skips the next instruction if VX != KK
-        Memory mem = Memory();
-
         // Should not skip if VX = KK
         int pc = mem.get_program_counter();
         mem.reg_write(0x8, 0xBB);
@@ -161,7 +153,6 @@ TEST_CASE( "CHIP-8 CPU" )
     SECTION( "Execute 5XY0" )
     {
         // 5XY0 skips the next instruction if VX = VY
-        Memory mem = Memory();
         mem.reg_write(0xB, 0xA);
         mem.reg_write(0xC, 0xA);
         mem.reg_write(0xD, 0x1);
@@ -178,7 +169,6 @@ TEST_CASE( "CHIP-8 CPU" )
     SECTION( "Execute 6XKK" )
     {
         // 6XKK puts the value KK into register VX
-        Memory mem = Memory();
         REQUIRE( mem.reg_read(0x7) == 0 );
         REQUIRE( execute(0x67BC, mem) == 0x6000 );
         REQUIRE( mem.reg_read(0x7) == 0xBC );
@@ -186,7 +176,6 @@ TEST_CASE( "CHIP-8 CPU" )
     SECTION( "Execute 7XKK" )
     {
         // 7XKK puts the value VX + KK in register VX
-        Memory mem = Memory();
         mem.reg_write(0xC, 0xA);
         REQUIRE( execute(0x7C06, mem) == 0x7000 );
         REQUIRE( mem.reg_read(0xC) == 0x10 );
@@ -194,10 +183,17 @@ TEST_CASE( "CHIP-8 CPU" )
     SECTION( "Execute 8XY0" )
     {
         // 8XY0 Stores the value VY in VX
-        Memory mem = Memory();
         mem.reg_write(0xA, 0x2);
         mem.reg_write(0xB, 0xFF);
         REQUIRE( execute(0x8AB0, mem) == 0x8000 );
         REQUIRE( mem.reg_read(0xB) == 0x2 );
+    }
+    SECTION( "Execute 8XY1" )
+    {
+        // 8XY1 sets VX = VX or VY
+        mem.reg_write(0xA, 0xAF);
+        mem.reg_write(0xB, 0xFA);
+        REQUIRE( execute(0x8AB1, mem) == 0x8001 );
+        REQUIRE( mem.reg_read(0xA) == 0xFF );
     }
 }

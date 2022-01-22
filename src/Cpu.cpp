@@ -147,7 +147,7 @@ int op2NNN(int instruction, Memory &mem)
     int pc = mem.get_program_counter();
     mem.stack_push(pc);
     // Jump to NNN
-    int new_pc = instruction & 0xFFF;
+    int new_pc = instruction & 0xF00;
     mem.set_program_counter(new_pc);
     return 0x2000; 
 }
@@ -175,8 +175,8 @@ int op4XKK(int instruction, Memory &mem)
 /* Skip the next instruction if VX = VY */
 int op5XY0(int instruction, Memory &mem) 
 { 
-    int x = (instruction & 0xFFF) >> 8;
-    int y = (instruction & 0xFF) >> 4;
+    int x = (instruction & 0xF00) >> 8;
+    int y = (instruction & 0xF0) >> 4;
     int vx = mem.reg_read(x);
     int vy = mem.reg_read(y);
     if (vx == vy)
@@ -187,7 +187,7 @@ int op5XY0(int instruction, Memory &mem)
 /* Put the value KK in VX */
 int op6XKK(int instruction, Memory &mem) 
 { 
-    int x = (instruction & 0xFFF) >> 8;
+    int x = (instruction & 0xF00) >> 8;
     int kk = (instruction & 0xFF);
     mem.reg_write(x, kk);
     return 0x6000; 
@@ -196,7 +196,7 @@ int op6XKK(int instruction, Memory &mem)
 /* Put VX + KK in VX */
 int op7XKK(int instruction, Memory &mem) 
 { 
-    int x = (instruction & 0xFFF) >> 8;
+    int x = (instruction & 0xF00) >> 8;
     int kk = (instruction & 0xFF);
     int vx = mem.reg_read(x);
     mem.reg_write(x, vx + kk);
@@ -206,14 +206,24 @@ int op7XKK(int instruction, Memory &mem)
 /* Put VX in VY */
 int op8XY0(int instruction, Memory &mem) 
 { 
-    int x = (instruction & 0xFFF) >> 8;
-    int y = (instruction & 0xFF) >> 4;
+    int x = (instruction & 0xF00) >> 8;
+    int y = (instruction & 0xF0) >> 4;
     int vx = mem.reg_read(x);
     mem.reg_write(y, vx);
     return 0x8000; 
 }
 
-int op8XY1(int instruction, Memory &mem) { return 0x8001; }
+/* Put (VX or VY) in VX */
+int op8XY1(int instruction, Memory &mem) 
+{ 
+    int x = (instruction & 0xF00) >> 8;
+    int y = (instruction & 0xF0) >> 4;
+    int vx = mem.reg_read(x);
+    int vy = mem.reg_read(y);
+    mem.reg_write(x, vx | vy);
+    return 0x8001; 
+}
+
 int op8XY2(int instruction, Memory &mem) { return 0x8002; }
 int op8XY3(int instruction, Memory &mem) { return 0x8003; }
 int op8XY4(int instruction, Memory &mem) { return 0x8004; }
