@@ -268,15 +268,10 @@ int op8XY5(int instruction, Memory &mem)
     int vx = mem.reg_read(x);
     int vy = mem.reg_read(y);
 
-    // check for borrow
-    if (vx > vy)
-        mem.reg_write(0xF, 1);
-    else
-    {
-        mem.reg_write(0xF, 0);
-        vx += 0x100;
-    }
-    mem.reg_write(x, vx - vy);
+    mem.reg_write(0xF, vx >= vy);
+    vx += 0x100 * (vx < vy); // For wrap-around
+    vx -= vy;
+    mem.reg_write(x, vx);
     return 0x8005; 
 }
 
@@ -289,6 +284,7 @@ int op8XY6(int instruction, Memory &mem)
     mem.reg_write(x, vx >> 1);
     return 0x8006; 
 }
+
 int op8XY7(int instruction, Memory &mem) { return 0x8007; }
 int op8XYE(int instruction, Memory &mem) { return 0x800E; }
 int op9XY0(int instruction, Memory &mem) { return 0x9000; }
