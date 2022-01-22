@@ -185,10 +185,19 @@ TEST_CASE( "CHIP-8 CPU" )
     }
     SECTION( "Execute 7XKK" )
     {
-        // 7XKK puts the value VX + KK in VX
+        // 7XKK puts the value VX + KK in register VX
         Memory mem = Memory();
         mem.reg_write(0xC, 0xA);
         REQUIRE( execute(0x7C06, mem) == 0x7000 );
         REQUIRE( mem.reg_read(0xC) == 0x10 );
+    }
+    SECTION( "Execute 8XY0" )
+    {
+        // 8XY0 Stores the value VY in VX
+        Memory mem = Memory();
+        mem.reg_write(0xA, 0x2);
+        mem.reg_write(0xB, 0xFF);
+        REQUIRE( execute(0x8AB0, mem) == 0x8000 );
+        REQUIRE( mem.reg_read(0xB) == 0x2 );
     }
 }

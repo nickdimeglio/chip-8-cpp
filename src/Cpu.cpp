@@ -197,14 +197,22 @@ int op6XKK(int instruction, Memory &mem)
 int op7XKK(int instruction, Memory &mem) 
 { 
     int x = (instruction & 0xFFF) >> 8;
-    int vx = mem.reg_read(x);
     int kk = (instruction & 0xFF);
+    int vx = mem.reg_read(x);
     mem.reg_write(x, vx + kk);
     return 0x7000; 
 }
 
+/* Put VX in VY */
+int op8XY0(int instruction, Memory &mem) 
+{ 
+    int x = (instruction & 0xFFF) >> 8;
+    int y = (instruction & 0xFF) >> 4;
+    int vx = mem.reg_read(x);
+    mem.reg_write(y, vx);
+    return 0x8000; 
+}
 
-int op8XY0(int instruction, Memory &mem) { return 0x8000; }
 int op8XY1(int instruction, Memory &mem) { return 0x8001; }
 int op8XY2(int instruction, Memory &mem) { return 0x8002; }
 int op8XY3(int instruction, Memory &mem) { return 0x8003; }
