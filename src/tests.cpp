@@ -228,4 +228,21 @@ TEST_CASE( "CHIP-8 CPU" )
         REQUIRE( mem.reg_read(0xA) == 0x1 );
         REQUIRE( mem.reg_read(0xF) == 0x0 );
     }
+    SECTION( "Execute 8XY5" )
+    {
+        // 8XY5 sets VX = VX - VY,  VF = NOT borrow
+        mem.reg_write(0xA, 0xF0);
+        mem.reg_write(0xB, 0xF2);
+        mem.reg_write(0xC, 0x07);
+
+        // 0xF0 - 0xF2 = 0xFE, not borrow = 0
+        REQUIRE( execute(0x8AB5, mem) == 0x8005 );
+        REQUIRE( mem.reg_read(0xA) == 0XFE );
+        REQUIRE( mem.reg_read(0xF) == 0 );
+
+        // 0xF2 - 0x7 = 0xEB not borrow = 1
+        REQUIRE( execute(0x8BC5, mem) == 0x8005 );
+        REQUIRE( mem.reg_read(0xB) == 0xEB );
+        REQUIRE( mem.reg_read(0xF) == 0x1 );
+    }
 }

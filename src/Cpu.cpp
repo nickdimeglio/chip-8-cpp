@@ -260,8 +260,25 @@ int op8XY4(int instruction, Memory &mem)
     return 0x8004; 
 }
 
+/* Put (VX - VY) in VX, set VF to not borrow */
+int op8XY5(int instruction, Memory &mem) 
+{ 
+    int x = (instruction & 0xF00) >> 8;
+    int y = (instruction & 0xF0) >> 4;
+    int vx = mem.reg_read(x);
+    int vy = mem.reg_read(y);
 
-int op8XY5(int instruction, Memory &mem) { return 0x8005; }
+    // check for borrow
+    if (vx > vy)
+        mem.reg_write(0xF, 1);
+    else
+    {
+        mem.reg_write(0xF, 0);
+        vx += 0x100;
+    }
+    mem.reg_write(x, vx - vy);
+    return 0x8005; 
+}
 int op8XY6(int instruction, Memory &mem) { return 0x8006; }
 int op8XY7(int instruction, Memory &mem) { return 0x8007; }
 int op8XYE(int instruction, Memory &mem) { return 0x800E; }
