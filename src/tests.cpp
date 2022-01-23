@@ -294,4 +294,20 @@ TEST_CASE( "CHIP-8 CPU" )
         REQUIRE( mem.reg_read(0xB) == 0xDE );
         REQUIRE( mem.reg_read(0xF) == 0x0 );
     }
+    SECTION( "Execute 9XY0" )
+    {
+        // 9XY0 skips the next instruction if VX != VY
+        mem.reg_write(0xA, 0x1);
+        mem.reg_write(0xB, 0x1);
+
+        // VA == VB
+        REQUIRE( mem.get_program_counter() == 0x200 );
+        REQUIRE( execute(0x9AB0, mem) == 0x9000 );
+        REQUIRE( mem.get_program_counter() == 0x200 );
+
+        // VB != VC
+        mem.reg_write(0xC, 0x2);
+        REQUIRE( execute(0x9BC0, mem) == 0x9000 );
+        REQUIRE( mem.get_program_counter() == 0x202 );
+    }
 }

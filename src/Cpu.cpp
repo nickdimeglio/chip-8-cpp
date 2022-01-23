@@ -311,8 +311,17 @@ int op8XYE(int instruction, Memory &mem)
     return 0x800E; 
 }
 
+/* Skip next instruction if VX != VY */
+int op9XY0(int instruction, Memory &mem) 
+{ 
+    int vx = mem.reg_read((instruction & 0xF00) >> 8);
+    int vy = mem.reg_read((instruction & 0xF0) >> 4);
+    if (vx != vy)
+        mem.inc_program_counter();
+    return 0x9000; 
+}
 
-int op9XY0(int instruction, Memory &mem) { return 0x9000; }
+
 int opANNN(int instruction, Memory &mem) { return 0xA000; }
 int opBNNN(int instruction, Memory &mem) { return 0xB000; }
 int opCXKK(int instruction, Memory &mem) { return 0xC000; }
