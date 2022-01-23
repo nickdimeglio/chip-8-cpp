@@ -317,4 +317,12 @@ TEST_CASE( "CHIP-8 CPU" )
         REQUIRE( execute(0xA678, mem) == 0xA000 );
         REQUIRE( mem.get_address_pointer() == 0x678 );
     }
+    SECTION( "Execute BNNN" )
+    {
+        // BNNN sets program counter = NNN + V0
+        REQUIRE( mem.get_program_counter() == 0x200 );
+        mem.reg_write(0x0, 0x50);
+        REQUIRE( execute(0xB400, mem) == 0xB000 );
+        REQUIRE( mem.get_program_counter() == 0x450 );
+    }
 }

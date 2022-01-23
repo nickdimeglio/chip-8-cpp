@@ -328,8 +328,14 @@ int opANNN(int instruction, Memory &mem)
     return 0xA000; 
 }
 
-
-int opBNNN(int instruction, Memory &mem) { return 0xB000; }
+/* Set program counter to NNN + V0 */
+int opBNNN(int instruction, Memory &mem) 
+{ 
+    int nnn = instruction & 0xFFF;
+    int v0 = mem.reg_read(0x0);
+    mem.set_program_counter(nnn + v0);
+    return 0xB000; 
+}
 int opCXKK(int instruction, Memory &mem) { return 0xC000; }
 int opDXYN(int instruction, Memory &mem) { return 0xD001; }
 int opEX9E(int instruction, Memory &mem) { return 0xE09E; }
