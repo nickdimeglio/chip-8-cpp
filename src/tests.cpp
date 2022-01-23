@@ -310,4 +310,11 @@ TEST_CASE( "CHIP-8 CPU" )
         REQUIRE( execute(0x9BC0, mem) == 0x9000 );
         REQUIRE( mem.get_program_counter() == 0x202 );
     }
+    SECTION( "Execute ANNN" )
+    {
+        // ANNN sets address pointer = NNN
+        REQUIRE( mem.get_address_pointer() == 0);
+        REQUIRE( execute(0xA678, mem) == 0xA000 );
+        REQUIRE( mem.get_address_pointer() == 0x678 );
+    }
 }

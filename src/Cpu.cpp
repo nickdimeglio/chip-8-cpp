@@ -321,8 +321,14 @@ int op9XY0(int instruction, Memory &mem)
     return 0x9000; 
 }
 
+/* Set address pointer to NNN */
+int opANNN(int instruction, Memory &mem) 
+{ 
+    mem.set_address_pointer(instruction & 0xFFF);
+    return 0xA000; 
+}
 
-int opANNN(int instruction, Memory &mem) { return 0xA000; }
+
 int opBNNN(int instruction, Memory &mem) { return 0xB000; }
 int opCXKK(int instruction, Memory &mem) { return 0xC000; }
 int opDXYN(int instruction, Memory &mem) { return 0xD001; }
