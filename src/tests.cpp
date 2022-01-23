@@ -279,4 +279,19 @@ TEST_CASE( "CHIP-8 CPU" )
         REQUIRE( mem.reg_read(0xC) == 0xEB );
         REQUIRE( mem.reg_read(0xF) == 0x1 );
     }
+    SECTION( "Execute 8XYE" )
+    {
+        // 8XYE set VX = VX << 1. VF = lost bit
+        // 0xAB << 1 = 0x56, VF = 1
+        mem.reg_write(0xA, 0xAB);
+        REQUIRE( execute(0x8A0E, mem) == 0x800E );
+        REQUIRE( mem.reg_read(0xA) == 0x56 );
+        REQUIRE( mem.reg_read(0xF) == 0x1 );
+
+        // 0x6F << 1 = 0xDE, VF = 0
+        mem.reg_write(0xB, 0x6F);
+        REQUIRE( execute(0x8B0E, mem) == 0x800E );
+        REQUIRE( mem.reg_read(0xB) == 0xDE );
+        REQUIRE( mem.reg_read(0xF) == 0x0 );
+    }
 }

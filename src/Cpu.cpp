@@ -301,8 +301,17 @@ int op8XY7(int instruction, Memory &mem)
     return 0x8007; 
 }
 
+/* VF = most significant bit of VX,  VX <<= 1 */
+int op8XYE(int instruction, Memory &mem) 
+{ 
+    int x = (instruction & 0xFFF) >> 8;
+    int vx = mem.reg_read(x);
+    mem.reg_write(0xF, vx >> 7);
+    mem.reg_write(x, vx << 1 & 0xFF);
+    return 0x800E; 
+}
 
-int op8XYE(int instruction, Memory &mem) { return 0x800E; }
+
 int op9XY0(int instruction, Memory &mem) { return 0x9000; }
 int opANNN(int instruction, Memory &mem) { return 0xA000; }
 int opBNNN(int instruction, Memory &mem) { return 0xB000; }
