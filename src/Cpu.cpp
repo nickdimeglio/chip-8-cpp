@@ -1,9 +1,11 @@
 #include "Memory.h"
 #include "Cpu.h"
+#include <chrono>
+#include <functional>
 #include <iostream>
+#include <random>
 #include <string>
 #include <sstream>
-#include <functional>
 using namespace std;
 using OpcodeFunction = function<int(int, Memory&)>;
 
@@ -336,7 +338,24 @@ int opBNNN(int instruction, Memory &mem)
     mem.set_program_counter(nnn + v0);
     return 0xB000; 
 }
-int opCXKK(int instruction, Memory &mem) { return 0xC000; }
+
+/* Set VX = random byte and KK */
+int opCXKK(int instruction, Memory &mem) 
+{ 
+    
+    int x = (instruction & 0xF00) >> 8;
+    int vx = mem.reg_read(x);
+    int kk = instruction & 0xFF;
+      
+    // Gen random int [0, 255]
+    unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+    default_random_engine generator (seed);
+    int rand_byte = generator() % 256;
+
+    mem.reg_write(x, rand_byte & kk);
+    return 0xC000; 
+}
+
 int opDXYN(int instruction, Memory &mem) { return 0xD001; }
 int opEX9E(int instruction, Memory &mem) { return 0xE09E; }
 int opEXA1(int instruction, Memory &mem) { return 0xE0A1; }
