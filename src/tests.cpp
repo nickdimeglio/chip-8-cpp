@@ -31,6 +31,12 @@ TEST_CASE( "CHIP-8 Memory" )
 
         memo.stack_push(0x300);
         REQUIRE( memo.stack_pop() == 0x300);
+
+        REQUIRE( memo.get_key(0xC) == 0 );
+        memo.flip_key(0xC);
+        REQUIRE( memo.get_key(0xC) == 1 );
+        memo.set_key(0xC, 0);
+        REQUIRE( memo.get_key(0xC) == 0);
     }
 }
 
@@ -296,5 +302,21 @@ TEST_CASE( "Chip-8 CPU" )
         REQUIRE( execute(0xCB11, mem) == 0xC000 );
         REQUIRE( mem.reg_read(0xB) != 0xED );
         REQUIRE( mem.reg_read(0xB) <= 0x11 );
+    }
+    SECTION( "Execute EX9E" )
+    {
+        // EX9E skips the next instruction if key VX is pressed
+        // 0xB not pressed
+        REQUIRE( mem.get_program_counter() == 0x200 );
+        REQUIRE( mem.reg_read(0xA) == 0 );
+        REQUIRE( execute(0xEA9E, mem) == 0xE09E );
+        REQUIRE( mem.get_program_counter() == 0x200 );
+        // 0xB pressed
+        mem.flip_key(0xB);
+        mem.reg_write(0xA, 0xB);
+        REQUIRE( mem.reg_read(0xA) == 0xB );
+        REQUIRE( mem.get_key(0xB) == 1 );
+        REQUIRE( execute(0xEA9E, mem) == 0xE09E );
+        REQUIRE( mem.get_program_counter() == 0x202 );
     }
 }

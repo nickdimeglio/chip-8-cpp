@@ -1,5 +1,6 @@
 #include "Memory.h"
 #include <algorithm>
+#include <unordered_map>
 using namespace std;
 
 // Font set
@@ -61,22 +62,24 @@ void Memory::stack_push(int address)
     }
 }
 
-
 // Screen memory access
 int Memory::screen_read(int address) { return screen[address]; }
 void Memory::screen_write(int address, int value) { screen[address] = value; }
 
-// ROM access 
+// Pointer access
+int Memory::get_address_pointer() { return address_pointer; }
+void Memory::set_address_pointer(int address) { address_pointer = address; }
 int Memory::get_program_counter() { return program_counter; }
 void Memory::inc_program_counter() { program_counter += 2; }
 void Memory::set_program_counter(int address) { program_counter = address; }
-
-// Address pointer access
-int Memory::get_address_pointer() { return address_pointer; }
-void Memory::set_address_pointer(int address) { address_pointer = address; }
 
 // Timer access
 int Memory::get_delay_timer() { return delay_timer; }
 void Memory::set_delay_timer(int cycles) { delay_timer = cycles; }
 int Memory::get_sound_timer() { return sound_timer; }
 void Memory::set_sound_timer(int cycles) { sound_timer = cycles; }
+
+// Keyboard access
+bool Memory::get_key(int key) { return keys[key]; }
+void Memory::set_key(int key, bool state) { keys[key] = state; }
+void Memory::flip_key(int key) { keys[key] = !keys[key]; }

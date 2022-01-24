@@ -342,7 +342,6 @@ int opBNNN(int instruction, Memory &mem)
 /* Set VX = random byte and KK */
 int opCXKK(int instruction, Memory &mem) 
 { 
-    
     int x = (instruction & 0xF00) >> 8;
     int vx = mem.reg_read(x);
     int kk = instruction & 0xFF;
@@ -356,8 +355,19 @@ int opCXKK(int instruction, Memory &mem)
     return 0xC000; 
 }
 
+// TODO: implement DXYN
 int opDXYN(int instruction, Memory &mem) { return 0xD001; }
-int opEX9E(int instruction, Memory &mem) { return 0xE09E; }
+
+/* Skip next instruction if key with the value of VX is pressed */ 
+int opEX9E(int instruction, Memory &mem) 
+{ 
+    int vx = mem.reg_read(((instruction & 0xF00) >> 8));
+    if (mem.get_key(vx))
+        mem.inc_program_counter();
+    return 0xE09E; 
+}
+
+
 int opEXA1(int instruction, Memory &mem) { return 0xE0A1; }
 int opFX07(int instruction, Memory &mem) { return 0xF007; }
 int opFX0A(int instruction, Memory &mem) { return 0xF00A; }
