@@ -419,8 +419,29 @@ int opFX07(int instruction, Memory &mem)
     mem.reg_write(x, dt);
     return 0xF007; 
 }
-int opFX0A(int instruction, Memory &mem) { return 0xF00A; }
-int opFX15(int instruction, Memory &mem) { return 0xF015; }
+
+/* Wait for a key press, store value of key in VX */
+int opFX0A(int instruction, Memory &mem) 
+{ 
+    int x = (instruction & 0xF00) >> 8;
+    for (;;)
+        for (int i = 0; i < 16; i ++)
+            if (mem.get_key(i))
+            {
+                mem.reg_write(x, i);
+                return 0xF00A;
+            } 
+}
+
+/* Set delay timer = VX */
+int opFX15(int instruction, Memory &mem) 
+{ 
+    int vx = mem.reg_read((instruction & 0xF00) >> 8);
+    mem.set_delay_timer(vx);
+    return 0xF015; 
+}
+
+
 int opFX18(int instruction, Memory &mem) { return 0xF018; }
 int opFX1E(int instruction, Memory &mem) { return 0xF01E; }
 int opFX29(int instruction, Memory &mem) { return 0xF029; }

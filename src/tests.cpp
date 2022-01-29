@@ -376,4 +376,12 @@ TEST_CASE( "Chip-8 CPU" )
         REQUIRE( mem.reg_read(0x5) == 60 );
 
     }
+    SECTION( "Execute FX15" )
+    {
+        // FX15 sets the delay time to VX
+        REQUIRE( mem.get_delay_timer() == -1 );
+        mem.reg_write(0xD, 99);
+        REQUIRE( execute(0xFD15, mem) == 0xF015 );
+        REQUIRE( mem.get_delay_timer() == 99 );
+    }
 }
