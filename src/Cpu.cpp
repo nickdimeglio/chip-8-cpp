@@ -361,7 +361,6 @@ int opCXKK(int instruction, Memory &mem)
 // set VF = collision
 int opDXYN(int instruction, Memory &mem) 
 { 
-
     // Start sprite drawing at coordinate (VX, VY)
     int vx = mem.reg_read((instruction & 0xF00) >> 8);
     int vy = mem.reg_read((instruction & 0xF0) >> 4);
@@ -374,6 +373,7 @@ int opDXYN(int instruction, Memory &mem)
     int num_bytes = instruction & 0xF;
     for (int i = 0; i < num_bytes; i++)
     {
+        // XOR bit-by-bit
         int sprite_byte = mem.mem_read(mem.get_address_pointer() + i);
         for (int j = 0; j < 8; j++ )
         {
@@ -383,27 +383,14 @@ int opDXYN(int instruction, Memory &mem)
             int xored_bit = sprite_bit ^ screen_bit;
 
             // Set VF on collision 
-            mem.reg_write(0xF, 1);
             if (xored_bit != screen_bit)
+                mem.reg_write(0xF, 1);
 
             // Update Screen
             mem.screen_write(draw_start + (64 * i + j), xored_bit);
         }
     }
     return 0xD000;
-    /*                    */
-    // draw_start = pixel at (VX, VY)
-    // set VF = 0
-
-    // For i in range (n):
-    //      sprite_byte = mem.get(address_pointer + i)
-    //      for j = 0 ... 7:
-    //          sprite_bit = (sprite_byte & 2**(7 - j)) >> (7 - j)
-    //          screen_bit = screen.get(draw_start + 64*i + j)
-    //          new_screen_bit = sprite_bit ^ screen_bit
-    //          if (new_screen_bit != screen_bit)
-    //              set VF = 1
-    //          screen.set(draw_start + 64*i + j, new_screen_bit)
 }
 
 /* Skip next instruction if key with the value of VX is pressed */ 
@@ -415,8 +402,15 @@ int opEX9E(int instruction, Memory &mem)
     return 0xE09E; 
 }
 
+/* Skip next instruction if key with the value of VX is not pressed */
+int opEXA1(int instruction, Memory &mem) 
+{ 
+    int vx = mem.reg_read((instruction & 0xF00) >> 8);
+    if (!mem.get_key(vx))
+        mem.inc_program_counter();
+    return 0xE0A1; 
+}
 
-int opEXA1(int instruction, Memory &mem) { return 0xE0A1; }
 int opFX07(int instruction, Memory &mem) { return 0xF007; }
 int opFX0A(int instruction, Memory &mem) { return 0xF00A; }
 int opFX15(int instruction, Memory &mem) { return 0xF015; }

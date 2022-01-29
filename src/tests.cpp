@@ -322,6 +322,16 @@ TEST_CASE( "Chip-8 CPU" )
         mem.reg_write(0xA, 33); 
         REQUIRE( execute(0xDABC, mem) == 0xD000 );
 
+        // Set a byte to all zeroes to ensure collision flag is unset
+        for (int i = 0x500; i < 0x507; i++)
+            mem.mem_write(i, 0x00);
+        for (int i = 0; i < 8; i++)
+            mem.screen_write(i, 0);
+        mem.reg_write(0xA, 0);
+        mem.reg_write(0xA, 0);
+        REQUIRE( execute(0xDAB1, mem) == 0xD000 );
+        REQUIRE( mem.reg_read(0xF) == 0 );
+
         cout << "\n\n\n";
         draw_screen(mem);
     }
@@ -339,6 +349,23 @@ TEST_CASE( "Chip-8 CPU" )
         REQUIRE( mem.reg_read(0xA) == 0xB );
         REQUIRE( mem.get_key(0xB) == 1 );
         REQUIRE( execute(0xEA9E, mem) == 0xE09E );
+        REQUIRE( mem.get_program_counter() == 0x202 );
+    }
+    SECTION( "Execute EXA1" )
+    {
+        // EXA1 skips the next instruction if key VX is not pressed
+        // 0xB not pressed
+        REQUIRE( mem.get_program_counter() == 0x200 );
+        REQUIRE( mem.get_key(0xB) == 0 );
+        mem.reg_write(0xA, 0xB);
+        REQUIRE( mem.reg_read(0xA) == 0xB );
+        REQUIRE( execute(0xEAA1, mem) == 0xE0A1 );
+        REQUIRE( mem.get_program_counter() == 0x202 );
+        // 0xB pressed
+        mem.flip_key(0xB);
+        REQUIRE( mem.reg_read(0xA) == 0xB );
+        REQUIRE( mem.get_key(0xB) == 1 );
+        REQUIRE( execute(0xEAA1, mem) == 0xE0A1 );
         REQUIRE( mem.get_program_counter() == 0x202 );
     }
 }
