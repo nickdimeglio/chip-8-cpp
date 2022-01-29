@@ -486,8 +486,20 @@ int opFX33(int instruction, Memory &mem)
     return 0xF033; 
 }
 
+/* Store registers V0 through VX in memory starting at address_pointer */
+int opFX55(int instruction, Memory &mem) 
+{ 
+    int x = (instruction & 0xF00) >> 8;
+    int a = mem.get_address_pointer();
+    for (int i = 0; i <= x; i++)
+    {
+        int val = mem.reg_read(i);
+        mem.mem_write(a + i, val);
+    }
+    return 0xF055; 
+}
 
-int opFX55(int instruction, Memory &mem) { return 0xF055; }
+
 int opFX65(int instruction, Memory &mem) { return 0xF065; }
 int invalidOpcode(int instruction, Memory &mem) { return -1; }
 

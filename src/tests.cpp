@@ -427,4 +427,19 @@ TEST_CASE( "Chip-8 CPU" )
         REQUIRE( mem.mem_read(0x601) == 2 );
         REQUIRE( mem.mem_read(0x602) == 5 );
     }
+    SECTION( "Execute FX55" )
+    {
+        // FX55 stores register V0 through VX in memory
+        // starting at location address_pointer
+        for (int i = 0; i < 0xF; i++)
+            mem.reg_write(i, i * 2 * (i % 2));
+
+        mem.set_address_pointer(0x300);
+        REQUIRE( execute(0xFB55, mem) == 0xF055 );
+
+        for (int i = 0; i < 0xC; i++)
+            REQUIRE( mem.mem_read(0x300 + i) == i * 2 * (i % 2) );
+        for (int i = 0xC; i <= 0xF; i++)
+            REQUIRE( mem.mem_read(0x300 + i) == 0 );
+    }
 }
