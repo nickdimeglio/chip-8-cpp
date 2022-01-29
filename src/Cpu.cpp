@@ -449,10 +449,44 @@ int opFX18(int instruction, Memory &mem)
     return 0xF018; 
 }
 
+/* Set address pointer = address pointer + VX */
+int opFX1E(int instruction, Memory &mem) 
+{ 
+    int vx = mem.reg_read((instruction & 0xF00) >> 8);
+    int ap = mem.get_address_pointer();
+    mem.set_address_pointer(ap + vx);
+    return 0xF01E; 
+}
 
-int opFX1E(int instruction, Memory &mem) { return 0xF01E; }
-int opFX29(int instruction, Memory &mem) { return 0xF029; }
-int opFX33(int instruction, Memory &mem) { return 0xF033; }
+/* Set address pointer = location of sprite for digit VX */
+int opFX29(int instruction, Memory &mem) 
+{ 
+    int vx = mem.reg_read((instruction & 0xF00) >> 8);
+    mem.set_address_pointer(5 * vx);
+    return 0xF029; 
+}
+
+/* Store BCD representation of VX in memory location
+   address_pointer .. address_pointer + 2
+*/
+int opFX33(int instruction, Memory &mem) 
+{ 
+    int vx = mem.reg_read((instruction & 0xF00) >> 8);
+    int ap = mem.get_address_pointer();
+
+    // ones place
+    mem.mem_write(ap + 2, vx % 10);
+    // tens place
+    vx = floor(vx / 10);
+    mem.mem_write(ap + 1, vx % 10);
+    // hundreds place
+    vx = floor(vx / 10);
+    mem.mem_write(ap, vx);
+
+    return 0xF033; 
+}
+
+
 int opFX55(int instruction, Memory &mem) { return 0xF055; }
 int opFX65(int instruction, Memory &mem) { return 0xF065; }
 int invalidOpcode(int instruction, Memory &mem) { return -1; }

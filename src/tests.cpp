@@ -393,4 +393,38 @@ TEST_CASE( "Chip-8 CPU" )
         REQUIRE( execute(0xFD18, mem) == 0xF018 );
         REQUIRE( mem.get_sound_timer() == 99 );
     }
+    SECTION( "Execute FX1E" )
+    {
+        // FX1E sets address pointer = address pointer + vx
+        REQUIRE( mem.get_address_pointer() == 0 );
+        mem.reg_write(0xD, 0x100);
+        REQUIRE( execute(0xFD1E, mem) == 0xF01E );
+        REQUIRE( mem.get_address_pointer() == 0x100 );
+    }
+    SECTION( "Execute FX29" )
+    {
+        // FX29 sets address pointer = location of sprite for digit VX
+        mem.reg_write(0x1, 0xE);
+        REQUIRE( mem.get_address_pointer() == 0 );
+        REQUIRE( execute(0xF129, mem) == 0xF029 );
+        REQUIRE( mem.get_address_pointer() == 70 );
+    }
+    SECTION( "Execute FX33" )
+    {
+        // FX33 stores the BCD representation of VX in 
+        // mem[address_pointer..address_pointer + 2]
+        mem.set_address_pointer(0x600);
+
+        mem.reg_write(0x1, 0xFE);
+        REQUIRE( execute(0xF133, mem) == 0xF033 );
+        REQUIRE( mem.mem_read(0x600) == 2 );
+        REQUIRE( mem.mem_read(0x601) == 5 );
+        REQUIRE( mem.mem_read(0x602) == 4 );
+
+        mem.reg_write(0x1, 25);
+        REQUIRE( execute(0xF133, mem) == 0xF033 );
+        REQUIRE( mem.mem_read(0x600) == 0 );
+        REQUIRE( mem.mem_read(0x601) == 2 );
+        REQUIRE( mem.mem_read(0x602) == 5 );
+    }
 }
