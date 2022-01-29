@@ -411,7 +411,14 @@ int opEXA1(int instruction, Memory &mem)
     return 0xE0A1; 
 }
 
-int opFX07(int instruction, Memory &mem) { return 0xF007; }
+/* Set register VX equal to the delay timer value */
+int opFX07(int instruction, Memory &mem) 
+{ 
+    int dt = mem.get_delay_timer();
+    int x = (instruction & 0xF00) >> 8;
+    mem.reg_write(x, dt);
+    return 0xF007; 
+}
 int opFX0A(int instruction, Memory &mem) { return 0xF00A; }
 int opFX15(int instruction, Memory &mem) { return 0xF015; }
 int opFX18(int instruction, Memory &mem) { return 0xF018; }

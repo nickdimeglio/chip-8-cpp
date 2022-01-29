@@ -368,4 +368,12 @@ TEST_CASE( "Chip-8 CPU" )
         REQUIRE( execute(0xEAA1, mem) == 0xE0A1 );
         REQUIRE( mem.get_program_counter() == 0x202 );
     }
+    SECTION( "Execute FX07" )
+    {
+        // FX07 sets VX = delay timer value
+        mem.set_delay_timer(60);
+        REQUIRE( execute(0xF507, mem) == 0xF007 );
+        REQUIRE( mem.reg_read(0x5) == 60 );
+
+    }
 }
