@@ -51,5 +51,6 @@ int opFX33(int instruction, Memory &mem);
 int opFX55(int instruction, Memory &mem);
 int opFX65(int instruction, Memory &mem);
 int invalidOpcode(int instruction, Memory &mem);
+void draw_screen(Memory mem);
 
 #endif

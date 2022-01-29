@@ -1,6 +1,7 @@
 #include "Memory.h"
 #include "Cpu.h"
 #include <chrono>
+#include <cmath>
 #include <functional>
 #include <iostream>
 #include <random>
@@ -355,8 +356,55 @@ int opCXKK(int instruction, Memory &mem)
     return 0xC000; 
 }
 
-// TODO: implement DXYN
-int opDXYN(int instruction, Memory &mem) { return 0xD001; }
+// Draw a sprite by XOring the n-bytes beginning at address_pointer
+// with the Nx8 pixel grid starting at coordinate (VX, VY)
+// set VF = collision
+int opDXYN(int instruction, Memory &mem) 
+{ 
+
+    // Start sprite drawing at coordinate (VX, VY)
+    int vx = mem.reg_read((instruction & 0xF00) >> 8);
+    int vy = mem.reg_read((instruction & 0xF0) >> 4);
+    int draw_start = vx + (vy * 64);
+
+    // Initialize VF to no collision
+    mem.reg_write(0xF, 0);
+
+    // XOR byte-by-byte
+    int num_bytes = instruction & 0xF;
+    for (int i = 0; i < num_bytes; i++)
+    {
+        int sprite_byte = mem.mem_read(mem.get_address_pointer() + i);
+        for (int j = 0; j < 8; j++ )
+        {
+            // XOR next bit
+            int sprite_bit = (sprite_byte & (int) pow(2, 7 - j)) >> (7 - j);
+            int screen_bit = mem.screen_read(draw_start + (64 * i + j));
+            int xored_bit = sprite_bit ^ screen_bit;
+
+            // Set VF on collision 
+            mem.reg_write(0xF, 1);
+            if (xored_bit != screen_bit)
+
+            // Update Screen
+            mem.screen_write(draw_start + (64 * i + j), xored_bit);
+        }
+    }
+    return 0xD000;
+    /*                    */
+    // draw_start = pixel at (VX, VY)
+    // set VF = 0
+
+    // For i in range (n):
+    //      sprite_byte = mem.get(address_pointer + i)
+    //      for j = 0 ... 7:
+    //          sprite_bit = (sprite_byte & 2**(7 - j)) >> (7 - j)
+    //          screen_bit = screen.get(draw_start + 64*i + j)
+    //          new_screen_bit = sprite_bit ^ screen_bit
+    //          if (new_screen_bit != screen_bit)
+    //              set VF = 1
+    //          screen.set(draw_start + 64*i + j, new_screen_bit)
+}
 
 /* Skip next instruction if key with the value of VX is pressed */ 
 int opEX9E(int instruction, Memory &mem) 
@@ -379,3 +427,20 @@ int opFX33(int instruction, Memory &mem) { return 0xF033; }
 int opFX55(int instruction, Memory &mem) { return 0xF055; }
 int opFX65(int instruction, Memory &mem) { return 0xF065; }
 int invalidOpcode(int instruction, Memory &mem) { return -1; }
+
+
+/* Testing utilities */
+void draw_screen(Memory mem) 
+{
+    cout << "\n\n";
+    for (auto i = 0; i < 2048; i++)
+    {
+        if (i % 64 == 0)
+            cout << "\n";
+        if (mem.screen_read(i))
+            cout << " ";
+        else
+            cout << "X";
+    }
+    cout << "\n\n";
+}

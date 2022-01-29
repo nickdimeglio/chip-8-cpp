@@ -303,6 +303,28 @@ TEST_CASE( "Chip-8 CPU" )
         REQUIRE( mem.reg_read(0xB) != 0xED );
         REQUIRE( mem.reg_read(0xB) <= 0x11 );
     }
+    SECTION( "Execute DXYN" )
+    {
+        // Draw a sprite by XOring n-bytes from address_pointer
+        // with the Nx8 pixel grid starting at coordinate (VX, VY)
+        // set VF = collision
+        int i = 0x500;
+        for (int i = 0x500; i < 0x50B; i++)
+            mem.mem_write(i, 0xAA);
+        mem.set_address_pointer(0x500);
+        mem.reg_write(0xA, 24);
+        mem.reg_write(0xB, 12);
+        cout << "\n\n\n";
+        draw_screen(mem);
+        REQUIRE( execute(0xDABC, mem) == 0xD000 );
+        REQUIRE( mem.reg_read(0xF) == 1 );
+
+        mem.reg_write(0xA, 33); 
+        REQUIRE( execute(0xDABC, mem) == 0xD000 );
+
+        cout << "\n\n\n";
+        draw_screen(mem);
+    }
     SECTION( "Execute EX9E" )
     {
         // EX9E skips the next instruction if key VX is pressed
