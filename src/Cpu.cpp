@@ -499,12 +499,24 @@ int opFX55(int instruction, Memory &mem)
     return 0xF055; 
 }
 
-
-int opFX65(int instruction, Memory &mem) { return 0xF065; }
-int invalidOpcode(int instruction, Memory &mem) { return -1; }
+/* Read values into registers V0 through VX from memory,
+   starting at address_pointer */
+int opFX65(int instruction, Memory &mem) 
+{ 
+    int x = (instruction & 0xF00) >> 8;
+    int a = mem.get_address_pointer();
+    for (int i = 0; i <= x; i++)
+    {
+        int val = mem.mem_read(a + i);
+        mem.reg_write(i, val);
+    }
+    return 0xF065; 
+}
 
 
 /* Testing utilities */
+int invalidOpcode(int instruction, Memory &mem) { return -1; }
+
 void draw_screen(Memory mem) 
 {
     cout << "\n\n";

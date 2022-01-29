@@ -442,4 +442,22 @@ TEST_CASE( "Chip-8 CPU" )
         for (int i = 0xC; i <= 0xF; i++)
             REQUIRE( mem.mem_read(0x300 + i) == 0 );
     }
+    SECTION( "Execute FX65" )
+    {
+        // FX65 reads values into registers V0 through VX
+        // from memory starting at location address_pointer
+        for (int i = 0; i <= 0xA; i++)
+            mem.mem_write(0x300 + i, i * 2 + 1);
+        
+        for (int i = 0; i <= 0xF; i++)
+            REQUIRE( mem.reg_read(i) == 0 );
+
+        mem.set_address_pointer(0x300);
+        REQUIRE( execute(0xFA65, mem) == 0xF065 );
+        for (int i = 0; i <= 0xF; i++)
+            if (i <= 0xA)
+                REQUIRE( mem.reg_read(i) == i * 2 + 1);
+            else
+                REQUIRE( mem.reg_read(i) == 0 );
+    }
 }
