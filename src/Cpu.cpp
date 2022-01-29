@@ -441,8 +441,15 @@ int opFX15(int instruction, Memory &mem)
     return 0xF015; 
 }
 
+/* Set sound timer = VX */
+int opFX18(int instruction, Memory &mem) 
+{ 
+    int vx = mem.reg_read((instruction & 0xF00) >> 8);
+    mem.set_sound_timer(vx);
+    return 0xF018; 
+}
 
-int opFX18(int instruction, Memory &mem) { return 0xF018; }
+
 int opFX1E(int instruction, Memory &mem) { return 0xF01E; }
 int opFX29(int instruction, Memory &mem) { return 0xF029; }
 int opFX33(int instruction, Memory &mem) { return 0xF033; }
